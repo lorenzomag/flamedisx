@@ -352,6 +352,17 @@ class LogLikelihood:
             rm = self._get_rate_mult(sname, params)
             mu = rm * s.mu_before_efficiencies(
                 **self._filter_source_kwargs(params, sname))
+            
+            
+            
+            
+            # Simulate this many events from source
+            if 'Template' not in type(self.sources[sname]).__name__:
+                #ask the source to simulate incident/true number
+                mu=mu/self.mu_estimators[sname](**self._filter_source_kwargs(params, sname))
+            else:
+                #modify the rate from the histograms (nominally returns 1.)
+                mu=mu*self.mu_estimators[sname](**self._filter_source_kwargs(params, sname))
             # Simulate this many events from source
             n_to_sim = np.random.poisson(mu)
             if n_to_sim == 0:
